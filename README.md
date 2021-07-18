@@ -4,4 +4,7 @@ This is a selection of Jupyter Notebooks written to illustrate some important ph
 
 MNG students are invited to use and modify the notebooks.
 
-lorem ipsum
+
+## List of Projects
+- salt_crystal_2d: Force on ion in a 2d NaCl crystal
+- salt_crystal_3d: Force on ion in a 3d NaCl crystal
