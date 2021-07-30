@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 
-def F(q1, q2):
+def FC(q1, q2):
     rvec = np.array(q2[0]) - np.array(q1[0])
     r = sqrt(rvec.dot(rvec))
     force = 8.9875517923e9 * q1[1] * q2[1]/(r*r) * rvec/r
@@ -18,7 +18,7 @@ qval = 1e-9
 xrange = tuple([p[0]*1.2 for p in Qpos])
 yrange = xrange
 
-vecs = [F([Qpos[i], Qval[i]], [qpos, qval]) for i in range(len(Qpos))]
+vecs = [FC([Qpos[i], Qval[i]], [qpos, qval]) for i in range(len(Qpos))]
 vec_res = sum(vecs)
 
 plt.xlim(xrange)
