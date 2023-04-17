@@ -8,14 +8,14 @@ Find the trajectory of a charged particle in a combined electric and magnetic fi
 
 # define fields
 
-Ex, Ey, Ez = (1e2, 0, 0) # electric field in V/m
+Ex, Ey, Ez = (-1e2, 0, 0) # electric field in V/m
 
-Bx, By, Bz = (1e-4, 0, 0) # magnetic field in T
+Bx, By, Bz = (-1e-4, 0, 0) # magnetic field in T
 
 
 # define particle
 
-q = 1.602e-19 # elementary charge in C
+q = -1.602e-19 # elementary charge in C
 m = 9.109e-31 # mass of an electron in kg
 
 x0, y0, z0 = (0, 0, 0) # initial position in m
@@ -55,7 +55,9 @@ args = (q, m, Ex, Ey, Ez, Bx, By, Bz)
 sol = solve_ivp(S, [0, tmax], init, args=args, t_eval=t)
 
 xs, ys, zs, vxs, vys, vzs = sol.y
-print(plt.style.available)
+
+# plot solution in 3d plot
+
 plt.style.use(['seaborn-bright'])
 ax = plt.figure().add_subplot(projection='3d')
 ax.plot(xs, ys, zs)
