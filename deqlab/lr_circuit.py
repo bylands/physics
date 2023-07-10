@@ -29,9 +29,12 @@ with col1:
 
 with col2:
     N = st.number_input('Number of points:', value=10, min_value=5, max_value=1000000)
-    model = st.selectbox('Model:', ('linear', 'nonlinear'))
-    method = st.selectbox('Method:', ('Euler', 'RK45'))
-
+    linear = st.checkbox('plot linear model', value=True)
+    nonlinear = st.checkbox('plot nonlinear model')
+    # method = st.selectbox('Solver:', ('Euler', 'RK45'))
+    euler = st.checkbox('Euler method', value=True)
+    rk45 = st.checkbox('Runge Kutta method')
+    theory = st.checkbox('plot theoretical graph (linear model)')
 
 # V0 = 12
 # R0 = 1500
@@ -49,23 +52,33 @@ It = np.zeros(N)
 It[0] = 0
 
 
-if method == 'Euler':
-    for i in range(1, N):
-        if model == 'linear':
-            It[i] = It[i-1] + dIdt(t[i-1], It[i-1], V0=V0, R=R0, L=L) * dt
-        elif model == 'nonlinear':
-            It[i] = It[i-1] + dIdt_nl(t[i-1], It[i-1], V0=V0, R0=R0, m=m, L=L) * dt
+fig, ax = plt.subplots()
 
-elif method == 'RK45':
-    if model == 'linear':
+if euler:
+    if linear:
+        for i in range(1, N):
+            It[i] = It[i-1] + dIdt(t[i-1], It[i-1], V0=V0, R=R0, L=L) * dt
+        ax.plot(t, It)
+    if nonlinear:
+        for i in range(1, N):
+            It[i] = It[i-1] + dIdt_nl(t[i-1], It[i-1], V0=V0, R0=R0, m=m, L=L) * dt
+        ax.plot(t, It)
+
+if rk45:
+    if linear:
         sol = solve_ivp(dIdt, [0, tmax], [It[0]], t_eval=t, args=(V0, R0, L))
         It = sol.y[0]
-    elif model == 'nonlinear':
+        ax.plot(t, It)
+
+    if nonlinear:
         sol = solve_ivp(dIdt_nl, [0, tmax], [It[0]], t_eval=t, args=(V0, R0, L, m))
         It = sol.y[0]
+        ax.plot(t, It)
 
-fig, ax = plt.subplots()
-ax.plot(t, It)
+if theory:
+    t_pl = np.linspace(0, tmax, 1000)
+    ax.plot(t_pl, exp_fit(t_pl, V0/R0, R0/L))
+
 
 st.subheader('Graph')
 st.pyplot(fig)
@@ -76,7 +89,7 @@ I0_fit = param[0]
 tau_fit = 1/param[1]
 
 st.subheader('Comparison')
-st.text(f'model: {model}')
-st.text(f'method: {method}')
+# st.text(f'model: {model}')
+# st.text(f'method: {method}')
 st.text(f'max current: theoretical {V0/R0*1000:.3f} mA, fit {I0_fit*1000:.3f} mA')
 st.text(f'time constant: theoretical {L/R0*1e6:.3f} µs, fit {tau_fit*1e6:.3f} µs')
