@@ -35,6 +35,8 @@ with col2:
     euler = st.checkbox('Euler method', value=True)
     rk45 = st.checkbox('Runge Kutta method')
     theory = st.checkbox('plot theoretical graph (linear model)')
+    fit = st.checkbox('plot fits (exponential)')
+    
 
 # V0 = 12
 # R0 = 1500
@@ -59,26 +61,42 @@ if euler:
         for i in range(1, N):
             It[i] = It[i-1] + dIdt(t[i-1], It[i-1], V0=V0, R=R0, L=L) * dt
         ax.plot(t, It)
+        if fit:
+            param, cov = curve_fit(exp_fit, t, It)
+            t_pl = np.linspace(0, tmax, 1000)
+            ax.plot(t_pl, exp_fit(t_pl, param[0], param[1]))
     if nonlinear:
         for i in range(1, N):
             It[i] = It[i-1] + dIdt_nl(t[i-1], It[i-1], V0=V0, R0=R0, m=m, L=L) * dt
         ax.plot(t, It)
+        if fit:
+            param, cov = curve_fit(exp_fit, t, It)
+            t_pl = np.linspace(0, tmax, 1000)
+            ax.plot(t_pl, exp_fit(t_pl, param[0], param[1]))
 
 if rk45:
     if linear:
         sol = solve_ivp(dIdt, [0, tmax], [It[0]], t_eval=t, args=(V0, R0, L))
         It = sol.y[0]
         ax.plot(t, It)
+        if fit:
+            param, cov = curve_fit(exp_fit, t, It)
+            t_pl = np.linspace(0, tmax, 1000)
+            ax.plot(t_pl, exp_fit(t_pl, param[0], param[1]))
 
     if nonlinear:
         sol = solve_ivp(dIdt_nl, [0, tmax], [It[0]], t_eval=t, args=(V0, R0, L, m))
         It = sol.y[0]
         ax.plot(t, It)
+        if fit:
+            param, cov = curve_fit(exp_fit, t, It)
+            t_pl = np.linspace(0, tmax, 1000)
+            ax.plot(t_pl, exp_fit(t_pl, param[0], param[1]))
 
 if theory:
     t_pl = np.linspace(0, tmax, 1000)
     ax.plot(t_pl, exp_fit(t_pl, V0/R0, R0/L))
-
+    
 
 st.subheader('Graph')
 st.pyplot(fig)
